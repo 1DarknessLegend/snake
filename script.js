@@ -6,26 +6,25 @@ const settingsButton = document.getElementById('settingsButton');
 const settingsMenu = document.getElementById('settingsMenu');
 const gameContainer = document.getElementById('gameContainer');
 
-// Настройки поля
 let tileCount = 20;
 let tileSize = 20;
-let canvasSize = tileCount * tileSize;
-canvas.width = canvasSize;
-canvas.height = canvasSize;
+canvas.width = tileCount * tileSize;
+canvas.height = tileCount * tileSize;
 
-// Змейка
 let snake = [{ x: 10, y: 10 }];
 let food = { x: 5, y: 5 };
 let velocity = { x: 0, y: 0 };
 let score = 0;
-let speed = 200; // миллисекунды между кадрами
+let speed = 200;
 let interval = null;
 
-// Функции игры
 function resetGame() {
-  snake = [{ x: Math.floor(tileCount/2), y: Math.floor(tileCount/2) }];
+  snake = [{ x: Math.floor(tileCount / 2), y: Math.floor(tileCount / 2) }];
   velocity = { x: 0, y: 0 };
-  food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+  food = {
+    x: Math.floor(Math.random() * tileCount),
+    y: Math.floor(Math.random() * tileCount)
+  };
   score = 0;
   updateScore();
 }
@@ -35,7 +34,7 @@ function updateScore() {
 }
 
 function drawGame() {
-  ctx.fillStyle = document.body.style.backgroundColor === 'white' ? '#fff' : '#111';
+  ctx.fillStyle = document.body.style.backgroundColor === 'white' ? 'white' : '#111';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Еда
@@ -49,38 +48,37 @@ function drawGame() {
   });
 
   moveSnake();
-
-  setTimeout(drawGame, speed);
 }
 
 function moveSnake() {
   const head = { x: snake[0].x + velocity.x, y: snake[0].y + velocity.y };
 
-  // Столкновение с краем
-  if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+  // Столкновение
+  if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount ||
+      snake.some(part => part.x === head.x && part.y === head.y)) {
     resetGame();
     return;
   }
 
-  // Столкновение с собой
-  for (let segment of snake) {
-    if (head.x === segment.x && head.y === segment.y) {
-      resetGame();
-      return;
-    }
-  }
-
   snake.unshift(head);
 
-  // Поедание еды
   if (head.x === food.x && head.y === food.y) {
     score++;
     updateScore();
-    food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+    food = {
+      x: Math.floor(Math.random() * tileCount),
+      y: Math.floor(Math.random() * tileCount)
+    };
   } else {
     snake.pop();
   }
 }
+
+function gameLoop() {
+  drawGame();
+}
+
+interval = setInterval(gameLoop, speed);
 
 // Управление
 document.getElementById('upBtn').addEventListener('click', () => {
@@ -98,18 +96,10 @@ document.getElementById('rightBtn').addEventListener('click', () => {
 
 document.addEventListener('keydown', (e) => {
   switch (e.key) {
-    case 'ArrowUp':
-      if (velocity.y === 0) velocity = { x: 0, y: -1 };
-      break;
-    case 'ArrowDown':
-      if (velocity.y === 0) velocity = { x: 0, y: 1 };
-      break;
-    case 'ArrowLeft':
-      if (velocity.x === 0) velocity = { x: -1, y: 0 };
-      break;
-    case 'ArrowRight':
-      if (velocity.x === 0) velocity = { x: 1, y: 0 };
-      break;
+    case 'ArrowUp': if (velocity.y === 0) velocity = { x: 0, y: -1 }; break;
+    case 'ArrowDown': if (velocity.y === 0) velocity = { x: 0, y: 1 }; break;
+    case 'ArrowLeft': if (velocity.x === 0) velocity = { x: -1, y: 0 }; break;
+    case 'ArrowRight': if (velocity.x === 0) velocity = { x: 1, y: 0 }; break;
   }
 });
 
@@ -118,59 +108,51 @@ settingsButton.addEventListener('click', () => {
   settingsMenu.classList.toggle('hidden');
 });
 
-// Белый/черный фон
+// Смена фона
 document.getElementById('whiteBackground').addEventListener('click', () => {
   document.body.style.backgroundColor = 'white';
   document.body.style.color = 'black';
-  gameContainer.style.border = '2px solid black';
-  settingsMenu.style.backgroundColor = '#fff';
+  gameContainer.style.borderColor = 'black';
   settingsMenu.style.borderColor = 'black';
 });
 
 document.getElementById('blackBackground').addEventListener('click', () => {
   document.body.style.backgroundColor = 'black';
   document.body.style.color = 'white';
-  gameContainer.style.border = '2px solid white';
-  settingsMenu.style.backgroundColor = '#111';
+  gameContainer.style.borderColor = 'white';
   settingsMenu.style.borderColor = 'white';
 });
 
-// Размеры поля
-document.getElementById('smallField').addEventListener('click', () => {
-  tileCount = 15;
-  resizeCanvas();
-});
-
-document.getElementById('mediumField').addEventListener('click', () => {
-  tileCount = 20;
-  resizeCanvas();
-});
-
-document.getElementById('largeField').addEventListener('click', () => {
-  tileCount = 30;
-  resizeCanvas();
-});
-
-function resizeCanvas() {
-  tileSize = Math.floor(window.innerWidth / tileCount / 2);
+// Размер поля
+function resizeField(size) {
+  tileCount = size;
   canvas.width = tileCount * tileSize;
   canvas.height = tileCount * tileSize;
   resetGame();
 }
 
-// Скорости
+document.getElementById('smallField').addEventListener('click', () => resizeField(15));
+document.getElementById('mediumField').addEventListener('click', () => resizeField(20));
+document.getElementById('largeField').addEventListener('click', () => resizeField(30));
+
+// Скорость
 document.getElementById('slowSpeed').addEventListener('click', () => {
+  clearInterval(interval);
   speed = 300;
+  interval = setInterval(gameLoop, speed);
 });
 
 document.getElementById('mediumSpeed').addEventListener('click', () => {
+  clearInterval(interval);
   speed = 200;
+  interval = setInterval(gameLoop, speed);
 });
 
 document.getElementById('fastSpeed').addEventListener('click', () => {
+  clearInterval(interval);
   speed = 100;
+  interval = setInterval(gameLoop, speed);
 });
 
-// Запуск игры
+// Старт игры
 resetGame();
-drawGame();
