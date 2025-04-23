@@ -7,11 +7,11 @@ body {
 }
 
 h1 {
-  margin-top: 20px;
+  margin: 10px 0;
 }
 
 #score {
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 #settingsButton {
@@ -43,7 +43,7 @@ h1 {
   display: block;
   margin: 5px 0;
   padding: 8px;
-  width: 150px;
+  width: 160px;
   background-color: #333;
   color: white;
   border: 2px solid white;
@@ -52,19 +52,20 @@ h1 {
 }
 
 #gameContainer {
-  margin: 50px auto 0 auto;
-  padding: 10px;
-  border: 2px solid white;
-  width: fit-content;
-  background-color: #111;
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  margin-top: 20px;
 }
 
 #game {
-  display: block;
   background-color: #111;
   border: 2px solid white;
-  box-sizing: border-box; /* чтобы рамка входила в размеры */
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
 }
 
 #controls {
@@ -78,8 +79,8 @@ h1 {
 }
 
 #controls button {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   margin: 5px;
   font-size: 24px;
   background-color: #333;
@@ -89,7 +90,6 @@ h1 {
   cursor: pointer;
 }
 
-/* Убираем синий контур при клике на кнопки */
 button:focus {
   outline: none;
 }
