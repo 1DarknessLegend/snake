@@ -1,24 +1,41 @@
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
   background-color: #111;
   color: white;
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 #container {
   position: relative;
   text-align: center;
+  width: 100%;
+  max-width: 600px;
 }
 
 #game {
   background: #111;
   border: 2px solid white;
+  width: 100%;
+  height: auto;
   display: block;
-  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+#score {
+  margin: 10px 0;
+  font-size: 24px;
 }
 
 #controls {
@@ -30,52 +47,45 @@ body {
   height: 60px;
   font-size: 24px;
   margin: 5px;
-  border-radius: 10px;
   border: 2px solid white;
   background-color: #111;
   color: white;
-  cursor: pointer;
-}
-
-#score {
-  margin-top: 10px;
-  font-size: 24px;
+  border-radius: 10px;
+  user-select: none;
+  outline: none;
 }
 
 #settingsBtn {
   position: absolute;
   top: 10px;
   right: 10px;
+  font-size: 30px;
   background: none;
   border: none;
-  font-size: 30px;
   color: white;
   cursor: pointer;
 }
 
 #settingsMenu {
+  background: #111;
+  border: 2px solid white;
+  padding: 10px;
   margin-top: 20px;
 }
 
 #settingsMenu button {
-  display: block;
-  margin: 5px auto;
-  width: 200px;
+  width: 100%;
+  margin: 5px 0;
   padding: 10px;
-  background: #111;
-  border: 2px solid white;
-  color: white;
   font-size: 16px;
+  border: 2px solid white;
+  background: #111;
+  color: white;
   cursor: pointer;
 }
 
 /* Убираем синее выделение */
-button {
+button:focus, button:active {
   outline: none;
   box-shadow: none;
-  user-select: none;
-}
-
-button:focus {
-  outline: none;
 }
