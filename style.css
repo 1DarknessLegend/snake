@@ -1,8 +1,10 @@
+/* Основные настройки */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  padding: 0;
   background: black;
   color: white;
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,24 +13,37 @@ body {
 
 #header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  width: 95%;
   margin-top: 10px;
 }
 
+#title {
+  font-size: 32px;
+  margin: 5px 0;
+}
+
+#score {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
 #settingsButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   background: none;
   border: none;
   font-size: 28px;
-  cursor: pointer;
   color: inherit;
+  cursor: pointer;
 }
 
 #settingsButton:focus {
   outline: none;
 }
 
+/* Игровое поле */
 #gameArea {
   display: flex;
   flex-direction: column;
@@ -41,11 +56,12 @@ body {
 #gameCanvas {
   background: #111;
   border: 2px solid white;
-  box-sizing: border-box;
-  max-width: 95vw;
+  max-width: 90vw;
   max-height: 60vh;
+  box-sizing: border-box;
 }
 
+/* Кнопки управления */
 #controls {
   margin-top: 20px;
   display: flex;
@@ -56,16 +72,16 @@ body {
 #controls button {
   width: 60px;
   height: 60px;
+  margin: 5px;
   background: transparent;
   border: 2px solid white;
   color: white;
   font-size: 24px;
   border-radius: 10px;
-  margin: 5px;
   cursor: pointer;
 }
 
-#controls > div {
+.left-right {
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -75,6 +91,7 @@ body {
   outline: none;
 }
 
+/* Меню настройки */
 #settingsMenu {
   position: absolute;
   top: 60px;
@@ -92,8 +109,8 @@ body {
   background: transparent;
   border: 2px solid white;
   color: white;
-  font-size: 16px;
   padding: 5px;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -101,6 +118,7 @@ body {
   outline: none;
 }
 
+/* Скрыть */
 .hidden {
   display: none;
 }
