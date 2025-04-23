@@ -2,13 +2,16 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Змейка</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="container">
+    <button id="settingsBtn" onclick="toggleSettings()">⚙️</button>
     <h1>Змейка</h1>
     <canvas id="game"></canvas>
+    <div id="score">Очки: 0</div>
     <div id="controls">
       <button onclick="move('up')">▲</button>
       <div>
@@ -17,17 +20,16 @@
         <button onclick="move('right')">▶</button>
       </div>
     </div>
-    <div id="score">Очки: 0</div>
-    <button id="settingsBtn" onclick="toggleSettings()">⚙</button>
+
     <div id="settingsMenu" style="display: none;">
       <button onclick="setTheme('white')">Белый фон</button>
       <button onclick="setTheme('black')">Чёрный фон</button>
       <button onclick="setFieldSize('small')">Маленькое поле</button>
       <button onclick="setFieldSize('medium')">Среднее поле</button>
       <button onclick="setFieldSize('large')">Большое поле</button>
-      <button onclick="setSpeed('slow')">Маленькая скорость</button>
+      <button onclick="setSpeed('slow')">Медленная скорость</button>
       <button onclick="setSpeed('medium')">Средняя скорость</button>
-      <button onclick="setSpeed('fast')">Большая скорость</button>
+      <button onclick="setSpeed('fast')">Быстрая скорость</button>
     </div>
   </div>
 
