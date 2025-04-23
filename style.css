@@ -1,90 +1,95 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
-  background: black;
-  color: white;
+  margin: 0;
   font-family: Arial, sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background-color: black;
+  color: white;
+  text-align: center;
 }
 
-.header {
-  position: relative;
-  width: 100%;
-  text-align: center;
-  padding: 10px;
+h1 {
+  margin: 10px 0;
 }
 
 #score {
-  margin-top: 5px;
+  margin: 5px 0;
 }
 
 #settingsButton {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
-  border: none;
-  font-size: 30px;
+  font-size: 24px;
+  padding: 8px;
+  background-color: #333;
+  border: 2px solid white;
+  color: white;
+  border-radius: 8px;
   cursor: pointer;
-  color: inherit;
-}
-
-#settingsButton:focus {
-  outline: none;
 }
 
 #settingsMenu {
+  display: none;
   position: absolute;
   top: 60px;
   right: 10px;
-  background: #222;
+  background-color: #222;
   border: 2px solid white;
+  border-radius: 8px;
   padding: 10px;
-  display: none;
-  flex-direction: column;
+  z-index: 1000;
 }
 
-#gameArea {
-  flex-grow: 1;
+#settingsMenu button {
+  display: block;
+  margin: 5px 0;
+  padding: 8px;
+  width: 160px;
+  background-color: #333;
+  color: white;
+  border: 2px solid white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#gameContainer {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 70vh;
+  margin-top: 20px;
 }
 
-#gameCanvas {
-  background: black;
-  border: 3px solid white;
+#game {
+  background-color: #111;
+  border: 2px solid white;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
 }
 
 #controls {
-  margin: 10px;
-  text-align: center;
+  margin-top: 20px;
+}
+
+#controls div {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
 }
 
 #controls button {
   width: 60px;
   height: 60px;
-  font-size: 30px;
   margin: 5px;
-  background: none;
-  border: 2px solid white;
+  font-size: 24px;
+  background-color: #333;
   color: white;
-  border-radius: 10px;
+  border: 2px solid white;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-#controls button:focus {
+button:focus {
   outline: none;
-}
-
-.hidden {
-  display: none;
 }
