@@ -2,38 +2,35 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Змейка</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h1>Змейка</h1>
-<div id="score">Очки: 0</div>
-
-<button id="settingsButton">⚙️</button>
-
-<div id="settingsMenu">
-  <button onclick="setTheme('white')">Белый фон</button>
-  <button onclick="setTheme('black')">Черный фон</button>
-  <button onclick="setFieldSize('small')">Маленькое поле</button>
-  <button onclick="setFieldSize('medium')">Среднее поле</button>
-  <button onclick="setFieldSize('large')">Большое поле</button>
-</div>
-
-<div id="gameContainer">
-  <canvas id="game"></canvas>
-</div>
-
-<div id="controls">
-  <div><button id="up">↑</button></div>
-  <div>
-    <button id="left">←</button>
-    <button id="down">↓</button>
-    <button id="right">→</button>
+  <div id="container">
+    <h1>Змейка</h1>
+    <canvas id="game"></canvas>
+    <div id="controls">
+      <button onclick="move('up')">▲</button>
+      <div>
+        <button onclick="move('left')">◀</button>
+        <button onclick="move('down')">▼</button>
+        <button onclick="move('right')">▶</button>
+      </div>
+    </div>
+    <div id="score">Очки: 0</div>
+    <button id="settingsBtn" onclick="toggleSettings()">⚙</button>
+    <div id="settingsMenu" style="display: none;">
+      <button onclick="setTheme('white')">Белый фон</button>
+      <button onclick="setTheme('black')">Чёрный фон</button>
+      <button onclick="setFieldSize('small')">Маленькое поле</button>
+      <button onclick="setFieldSize('medium')">Среднее поле</button>
+      <button onclick="setFieldSize('large')">Большое поле</button>
+      <button onclick="setSpeed('slow')">Маленькая скорость</button>
+      <button onclick="setSpeed('medium')">Средняя скорость</button>
+      <button onclick="setSpeed('fast')">Большая скорость</button>
+    </div>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
