@@ -113,12 +113,17 @@ function setTheme(color) {
     });
   }
 }
-
 function setFieldSize(size) {
-  if (size === 'small') fieldSize = 15;
-  if (size === 'medium') fieldSize = 20;
-  if (size === 'large') fieldSize = 30;
-  initGame();
+  if (size === 'small') {
+    fieldSize = 15;
+  } else if (size === 'medium') {
+    fieldSize = 20;
+  } else if (size === 'large') {
+    fieldSize = 30;
+  }
+  
+  canvas.width = fieldSize * boxSize;
+  canvas.height = fieldSize * boxSize;
+  initGame(); // Полностью перезапуск игры
 }
-
 initGame();
