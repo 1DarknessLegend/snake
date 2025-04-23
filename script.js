@@ -37,14 +37,12 @@ function randomFood() {
 }
 
 function drawGame() {
-  ctx.fillStyle = document.body.style.backgroundColor === 'white' ? 'white' : '#111';
+  ctx.fillStyle = getComputedStyle(canvas).backgroundColor;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Еда
   ctx.fillStyle = 'red';
-  ctx.fillRect(food.x * tileSize, food.y * tileSize, tileSize, tileSize);
+  ctx.fillRect(food.x * tileSize, food.y * tileSize, tileSize - 2, tileSize - 2);
 
-  // Змейка
   ctx.fillStyle = 'lime';
   snake.forEach(part => {
     ctx.fillRect(part.x * tileSize, part.y * tileSize, tileSize - 2, tileSize - 2);
@@ -93,12 +91,11 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Меню настроек
+// Настройки
 settingsButton.addEventListener('click', () => {
   settingsMenu.classList.toggle('hidden');
 });
 
-// Белый фон
 document.getElementById('whiteBackground').addEventListener('click', () => {
   document.body.style.backgroundColor = 'white';
   document.body.style.color = 'black';
@@ -108,7 +105,6 @@ document.getElementById('whiteBackground').addEventListener('click', () => {
   settingsMenu.style.borderColor = 'black';
 });
 
-// Черный фон
 document.getElementById('blackBackground').addEventListener('click', () => {
   document.body.style.backgroundColor = 'black';
   document.body.style.color = 'white';
