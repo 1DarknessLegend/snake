@@ -2,33 +2,34 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Змейка</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="header">
+
+  <header id="header">
     <h1>Змейка</h1>
     <div id="score">Очки: 0</div>
     <button id="settingsButton">&#9881;</button>
-  </div>
+  </header>
 
   <div id="gameContainer">
     <canvas id="gameCanvas"></canvas>
+  </div>
 
-    <div id="controls">
-      <button id="upBtn">↑</button>
-      <div>
-        <button id="leftBtn">←</button>
-        <button id="downBtn">↓</button>
-        <button id="rightBtn">→</button>
-      </div>
+  <div id="controls">
+    <button id="upBtn">▲</button>
+    <div>
+      <button id="leftBtn">◀</button>
+      <button id="downBtn">▼</button>
+      <button id="rightBtn">▶</button>
     </div>
   </div>
 
   <div id="settingsMenu" class="hidden">
     <button id="whiteBackground">Белый фон</button>
-    <button id="blackBackground">Чёрный фон</button>
+    <button id="blackBackground">Черный фон</button>
     <button id="smallField">Маленькое поле</button>
     <button id="mediumField">Среднее поле</button>
     <button id="largeField">Большое поле</button>
