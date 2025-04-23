@@ -91,11 +91,12 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Настройки
+// Открытие меню
 settingsButton.addEventListener('click', () => {
   settingsMenu.classList.toggle('hidden');
 });
 
+// Цвет фона
 document.getElementById('whiteBackground').addEventListener('click', () => {
   document.body.style.backgroundColor = 'white';
   document.body.style.color = 'black';
