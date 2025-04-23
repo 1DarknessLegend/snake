@@ -2,39 +2,38 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Змейка</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="header">
-    <h1>Змейка</h1>
-    <div id="score">Очки: 0</div>
-    <button id="settingsButton">⚙️</button>
-  </div>
+<h1>Змейка</h1>
+<div id="score">Очки: 0</div>
 
-  <div id="gameArea">
-    <canvas id="gameCanvas"></canvas>
-  </div>
+<button id="settingsButton">⚙️</button>
 
-  <div id="controls">
-    <button id="upBtn">▲</button><br>
-    <button id="leftBtn">◀️</button>
-    <button id="downBtn">▼</button>
-    <button id="rightBtn">▶️</button>
-  </div>
+<div id="settingsMenu">
+  <button onclick="setTheme('white')">Белый фон</button>
+  <button onclick="setTheme('black')">Черный фон</button>
+  <button onclick="setFieldSize('small')">Маленькое поле</button>
+  <button onclick="setFieldSize('medium')">Среднее поле</button>
+  <button onclick="setFieldSize('large')">Большое поле</button>
+</div>
 
-  <div id="settingsMenu" class="hidden">
-    <button id="whiteBgBtn">Белый фон</button>
-    <button id="blackBgBtn">Чёрный фон</button>
-    <button id="smallFieldBtn">Маленькое поле</button>
-    <button id="mediumFieldBtn">Среднее поле</button>
-    <button id="largeFieldBtn">Большое поле</button>
-    <button id="slowSpeedBtn">Медленная скорость</button>
-    <button id="mediumSpeedBtn">Средняя скорость</button>
-    <button id="fastSpeedBtn">Быстрая скорость</button>
-  </div>
+<div id="gameContainer">
+  <canvas id="game"></canvas>
+</div>
 
-  <script src="script.js"></script>
+<div id="controls">
+  <div><button id="up">↑</button></div>
+  <div>
+    <button id="left">←</button>
+    <button id="down">↓</button>
+    <button id="right">→</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
