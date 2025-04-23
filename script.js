@@ -1,153 +1,93 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
-
-let box = 20;
+const boxSize = 20;
+let fieldSize = 20;
 let snake = [];
-let direction = 'RIGHT';
-let food;
+let food = {};
+let dx = 0;
+let dy = 0;
 let score = 0;
-let settingsMenuVisible = false;
-let queuedDirection = null;
+let gameInterval;
 
-// --- ИНИЦИАЛИЗАЦИЯ ---
-initSnake();
-food = spawnFood();
-document.getElementById('score').innerText = `Очки: ${score}`;
-
-function initSnake() {
-  snake = [{ 
-    x: Math.floor((canvas.width / 2) / box) * box, 
-    y: Math.floor((canvas.height / 2) / box) * box 
-  }];
+function initGame() {
+  canvas.width = fieldSize * boxSize;
+  canvas.height = fieldSize * boxSize;
+  snake = [{ x: Math.floor(fieldSize/2), y: Math.floor(fieldSize/2) }];
+  spawnFood();
+  dx = 0;
+  dy = 0;
+  score = 0;
+  document.getElementById('score').textContent = 'Очки: ' + score;
+  if (gameInterval) clearInterval(gameInterval);
+  gameInterval = setInterval(draw, 100);
 }
 
 function spawnFood() {
-  return {
-    x: Math.floor(Math.random() * (canvas.width / box)) * box,
-    y: Math.floor(Math.random() * (canvas.height / box)) * box
+  food = {
+    x: Math.floor(Math.random() * fieldSize),
+    y: Math.floor(Math.random() * fieldSize)
   };
 }
 
-// Управление
-document.addEventListener('keydown', event => queueDirection(event.key));
-document.getElementById('up').addEventListener('click', () => queueDirection('ArrowUp'));
-document.getElementById('down').addEventListener('click', () => queueDirection('ArrowDown'));
-document.getElementById('left').addEventListener('click', () => queueDirection('ArrowLeft'));
-document.getElementById('right').addEventListener('click', () => queueDirection('ArrowRight'));
+function draw() {
+  ctx.fillStyle = canvas.style.backgroundColor || '#111';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-function queueDirection(key) {
-  queuedDirection = key;
-}
-
-function changeDirection() {
-  if (!queuedDirection) return;
-  if (queuedDirection === 'ArrowUp' && direction !== 'DOWN') direction = 'UP';
-  else if (queuedDirection === 'ArrowDown' && direction !== 'UP') direction = 'DOWN';
-  else if (queuedDirection === 'ArrowLeft' && direction !== 'RIGHT') direction = 'LEFT';
-  else if (queuedDirection === 'ArrowRight' && direction !== 'LEFT') direction = 'RIGHT';
-  queuedDirection = null;
-}
-
-function drawSnake() {
-  for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = (i === 0) ? 'lime' : 'green';
-    ctx.fillRect(snake[i].x, snake[i].y, box, box);
-    ctx.strokeStyle = 'black';
-    ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+  for (let part of snake) {
+    ctx.fillStyle = 'lime';
+    ctx.fillRect(part.x * boxSize, part.y * boxSize, boxSize-2, boxSize-2);
   }
-  drawEyes();
-}
 
-function drawEyes() {
-  const head = snake[0];
-  ctx.fillStyle = 'black';
-
-  let eyeOffsetX = 0;
-  let eyeOffsetY = 0;
-  
-  if (direction === 'UP') { eyeOffsetY = -5; }
-  if (direction === 'DOWN') { eyeOffsetY = 5; }
-  if (direction === 'LEFT') { eyeOffsetX = -5; }
-  if (direction === 'RIGHT') { eyeOffsetX = 5; }
-
-  ctx.beginPath();
-  ctx.arc(head.x + box / 3 + eyeOffsetX, head.y + box / 3 + eyeOffsetY, 3, 0, 2 * Math.PI);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(head.x + box * 2/3 + eyeOffsetX, head.y + box / 3 + eyeOffsetY, 3, 0, 2 * Math.PI);
-  ctx.fill();
-}
-
-function drawFood() {
   ctx.fillStyle = 'red';
-  ctx.fillRect(food.x, food.y, box, box);
-}
+  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize-2, boxSize-2);
 
-function update() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-  changeDirection();
-
-  drawSnake();
-  drawFood();
-
-  let head = { x: snake[0].x, y: snake[0].y };
-
-  if (direction === 'UP') head.y -= box;
-  if (direction === 'DOWN') head.y += box;
-  if (direction === 'LEFT') head.x -= box;
-  if (direction === 'RIGHT') head.x += box;
-
-  if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || collision(head, snake)) {
-    resetGame();
+  if (head.x < 0 || head.y < 0 || head.x >= fieldSize || head.y >= fieldSize || collision(head)) {
+    initGame();
     return;
   }
 
   snake.unshift(head);
 
   if (head.x === food.x && head.y === food.y) {
-    food = spawnFood();
+    spawnFood();
     score++;
-    document.getElementById('score').innerText = `Очки: ${score}`;
+    document.getElementById('score').textContent = 'Очки: ' + score;
   } else {
     snake.pop();
   }
 }
 
-function collision(head, array) {
-  for (let i = 0; i < array.length; i++) {
-    if (head.x === array[i].x && head.y === array[i].y) {
-      return true;
-    }
-  }
-  return false;
+function collision(head) {
+  return snake.some(part => part.x === head.x && part.y === head.y);
 }
 
-function resetGame() {
-  initSnake();
-  direction = 'RIGHT';
-  food = spawnFood();
-  score = 0;
-  document.getElementById('score').innerText = `Очки: ${score}`;
-}
+document.getElementById('up').addEventListener('click', () => { if (dy === 0) {dx = 0; dy = -1;} });
+document.getElementById('down').addEventListener('click', () => { if (dy === 0) {dx = 0; dy = 1;} });
+document.getElementById('left').addEventListener('click', () => { if (dx === 0) {dx = -1; dy = 0;} });
+document.getElementById('right').addEventListener('click', () => { if (dx === 0) {dx = 1; dy = 0;} });
 
-setInterval(update, 100);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
+  if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
+  if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
+  if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
+});
 
-// Настройки
 document.getElementById('settingsButton').addEventListener('click', () => {
-  settingsMenuVisible = !settingsMenuVisible;
-  document.getElementById('settingsMenu').style.display = settingsMenuVisible ? 'block' : 'none';
+  const menu = document.getElementById('settingsMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 });
 
 function setTheme(color) {
   const buttons = document.querySelectorAll('button');
-  
+
   if (color === 'white') {
     document.body.style.backgroundColor = 'white';
     document.body.style.color = 'black';
     canvas.style.backgroundColor = '#eee';
-    canvas.style.borderColor = 'black'; // <-- добавлено
+    canvas.style.borderColor = 'black';
     document.getElementById('gameContainer').style.backgroundColor = 'white';
     document.getElementById('gameContainer').style.borderColor = 'black';
     document.getElementById('settingsMenu').style.backgroundColor = 'white';
@@ -161,7 +101,7 @@ function setTheme(color) {
     document.body.style.backgroundColor = 'black';
     document.body.style.color = 'white';
     canvas.style.backgroundColor = '#111';
-    canvas.style.borderColor = 'white'; // <-- добавлено
+    canvas.style.borderColor = 'white';
     document.getElementById('gameContainer').style.backgroundColor = '#111';
     document.getElementById('gameContainer').style.borderColor = 'white';
     document.getElementById('settingsMenu').style.backgroundColor = '#222';
@@ -175,15 +115,10 @@ function setTheme(color) {
 }
 
 function setFieldSize(size) {
-  if (size === 'small') {
-    canvas.width = 200;
-    canvas.height = 200;
-  } else if (size === 'medium') {
-    canvas.width = 300;
-    canvas.height = 300;
-  } else if (size === 'large') {
-    canvas.width = 400;
-    canvas.height = 400;
-  }
-  resetGame();
+  if (size === 'small') fieldSize = 15;
+  if (size === 'medium') fieldSize = 20;
+  if (size === 'large') fieldSize = 30;
+  initGame();
 }
+
+initGame();
