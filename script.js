@@ -101,7 +101,9 @@ document.getElementById('whiteBackground').addEventListener('click', () => {
   document.body.style.backgroundColor = 'white';
   document.body.style.color = 'black';
   gameArea.style.backgroundColor = 'white';
+  gameArea.style.borderColor = 'black';
   canvas.style.backgroundColor = 'white';
+  canvas.style.borderColor = 'black';
   settingsMenu.style.backgroundColor = 'white';
   settingsMenu.style.borderColor = 'black';
 });
@@ -110,7 +112,9 @@ document.getElementById('blackBackground').addEventListener('click', () => {
   document.body.style.backgroundColor = 'black';
   document.body.style.color = 'white';
   gameArea.style.backgroundColor = 'black';
+  gameArea.style.borderColor = 'white';
   canvas.style.backgroundColor = '#111';
+  canvas.style.borderColor = 'white';
   settingsMenu.style.backgroundColor = '#111';
   settingsMenu.style.borderColor = 'white';
 });
