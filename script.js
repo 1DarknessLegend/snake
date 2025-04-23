@@ -3,6 +3,14 @@ const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const settingsButton = document.getElementById('settingsButton');
 const settingsMenu = document.getElementById('settingsMenu');
+
+// При нажатии на шестерёнку показывать/скрывать меню
+settingsButton.addEventListener('click', () => {
+  settingsMenu.classList.toggle('hidden');
+});
+
+// Проверка работы
+console.log("Кнопка настроек подключена правильно!");
 const gameArea = document.getElementById('gameArea');
 
 let tileCount = 20;
