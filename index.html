@@ -7,30 +7,34 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="container">
-    <button id="settingsBtn" onclick="toggleSettings()">⚙️</button>
+  <div id="header">
     <h1>Змейка</h1>
-    <canvas id="game"></canvas>
     <div id="score">Очки: 0</div>
+    <button id="settingsButton">&#9881;</button>
+  </div>
+
+  <div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+
     <div id="controls">
-      <button onclick="move('up')">▲</button>
+      <button id="upBtn">↑</button>
       <div>
-        <button onclick="move('left')">◀</button>
-        <button onclick="move('down')">▼</button>
-        <button onclick="move('right')">▶</button>
+        <button id="leftBtn">←</button>
+        <button id="downBtn">↓</button>
+        <button id="rightBtn">→</button>
       </div>
     </div>
+  </div>
 
-    <div id="settingsMenu" style="display: none;">
-      <button onclick="setTheme('white')">Белый фон</button>
-      <button onclick="setTheme('black')">Чёрный фон</button>
-      <button onclick="setFieldSize('small')">Маленькое поле</button>
-      <button onclick="setFieldSize('medium')">Среднее поле</button>
-      <button onclick="setFieldSize('large')">Большое поле</button>
-      <button onclick="setSpeed('slow')">Медленная скорость</button>
-      <button onclick="setSpeed('medium')">Средняя скорость</button>
-      <button onclick="setSpeed('fast')">Быстрая скорость</button>
-    </div>
+  <div id="settingsMenu" class="hidden">
+    <button id="whiteBackground">Белый фон</button>
+    <button id="blackBackground">Чёрный фон</button>
+    <button id="smallField">Маленькое поле</button>
+    <button id="mediumField">Среднее поле</button>
+    <button id="largeField">Большое поле</button>
+    <button id="slowSpeed">Маленькая скорость</button>
+    <button id="mediumSpeed">Средняя скорость</button>
+    <button id="fastSpeed">Большая скорость</button>
   </div>
 
   <script src="script.js"></script>
