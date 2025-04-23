@@ -9,15 +9,23 @@ let direction = 'right';
 let food = {};
 let darkTheme = true;
 let score = 0;
+let intervalId = null;
 
-canvas.width = fieldSize * boxSize;
-canvas.height = fieldSize * boxSize;
+resizeCanvas();
+initGame();
+
+function resizeCanvas() {
+  canvas.width = fieldSize * boxSize;
+  canvas.height = fieldSize * boxSize;
+}
 
 function initGame() {
-  snake = [{ x: Math.floor(fieldSize / 2), y: Math.floor(fieldSize / 2) }];
+  snake = [{ x: Math.floor(fieldSize/2), y: Math.floor(fieldSize/2) }];
   generateFood();
   score = 0;
   updateScore();
+  if (intervalId) clearInterval(intervalId);
+  intervalId = setInterval(updateGame, speed);
 }
 
 function generateFood() {
@@ -29,6 +37,14 @@ function generateFood() {
 
 function updateScore() {
   document.getElementById('score').innerText = `Очки: ${score}`;
+}
+
+function updateGame() {
+  moveSnake();
+  if (checkCollision()) {
+    initGame();
+  }
+  draw();
 }
 
 function moveSnake() {
@@ -50,12 +66,20 @@ function moveSnake() {
   }
 }
 
-function drawSnake() {
+function draw() {
+  ctx.fillStyle = darkTheme ? '#111' : '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Еда
+  ctx.fillStyle = 'red';
+  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize, boxSize);
+
+  // Змейка
   snake.forEach((segment, index) => {
     ctx.fillStyle = index === 0 ? 'lime' : 'green';
     ctx.fillRect(segment.x * boxSize, segment.y * boxSize, boxSize, boxSize);
     if (index === 0) {
-      // глазки змейки
+      // глазки
       ctx.fillStyle = 'black';
       ctx.fillRect(segment.x * boxSize + 5, segment.y * boxSize + 5, 4, 4);
       ctx.fillRect(segment.x * boxSize + 11, segment.y * boxSize + 5, 4, 4);
@@ -63,9 +87,13 @@ function drawSnake() {
   });
 }
 
-function drawFood() {
-  ctx.fillStyle = 'red';
-  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize, boxSize);
+function move(dir) {
+  if ((dir === 'left' && direction !== 'right') ||
+      (dir === 'right' && direction !== 'left') ||
+      (dir === 'up' && direction !== 'down') ||
+      (dir === 'down' && direction !== 'up')) {
+    direction = dir;
+  }
 }
 
 function checkCollision() {
@@ -77,60 +105,51 @@ function checkCollision() {
   return false;
 }
 
-// управление кнопками
-function move(dir) {
-  if ((dir === 'left' && direction !== 'right') ||
-      (dir === 'right' && direction !== 'left') ||
-      (dir === 'up' && direction !== 'down') ||
-      (dir === 'down' && direction !== 'up')) {
-    direction = dir;
-  }
-}
-
-// Настройки темы
+// Темы
 function setTheme(theme) {
   if (theme === 'white') {
-    document.body.style.backgroundColor = '#fff';
-    document.body.style.color = 'black';
+    darkTheme = false;
+    document.body.style.background = '#fff';
+    document.body.style.color = '#000';
     canvas.style.background = '#fff';
     canvas.style.border = '2px solid black';
     document.querySelectorAll('button').forEach(btn => {
-      btn.style.backgroundColor = '#fff';
-      btn.style.color = 'black';
+      btn.style.background = '#fff';
+      btn.style.color = '#000';
       btn.style.border = '2px solid black';
     });
   } else {
-    document.body.style.backgroundColor = '#111';
+    darkTheme = true;
+    document.body.style.background = '#111';
     document.body.style.color = 'white';
     canvas.style.background = '#111';
     canvas.style.border = '2px solid white';
     document.querySelectorAll('button').forEach(btn => {
-      btn.style.backgroundColor = '#111';
+      btn.style.background = '#111';
       btn.style.color = 'white';
       btn.style.border = '2px solid white';
     });
   }
 }
 
-// Настройки размера поля
+// Размер поля
 function setFieldSize(size) {
   if (size === 'small') fieldSize = 15;
   if (size === 'medium') fieldSize = 20;
   if (size === 'large') fieldSize = 30;
-  
-  canvas.width = fieldSize * boxSize;
-  canvas.height = fieldSize * boxSize;
+  resizeCanvas();
   initGame();
 }
 
-// Настройка скорости
+// Скорость игры
 function setSpeed(level) {
   if (level === 'slow') speed = 200;
   if (level === 'medium') speed = 100;
   if (level === 'fast') speed = 50;
+  initGame();
 }
 
-// Показать/скрыть меню
+// Меню настроек
 function toggleSettings() {
   const menu = document.getElementById('settingsMenu');
   if (menu.style.display === 'none') {
@@ -139,32 +158,3 @@ function toggleSettings() {
     menu.style.display = 'none';
   }
 }
-
-// Плавный цикл игры
-let lastTime = 0;
-
-function gameLoop(timestamp) {
-  if (timestamp - lastTime > speed) {
-    update();
-    draw();
-    lastTime = timestamp;
-  }
-  requestAnimationFrame(gameLoop);
-}
-
-function update() {
-  moveSnake();
-  if (checkCollision()) {
-    initGame();
-  }
-}
-
-function draw() {
-  ctx.fillStyle = darkTheme ? '#111' : '#fff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  drawFood();
-  drawSnake();
-}
-
-initGame();
-requestAnimationFrame(gameLoop);
