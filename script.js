@@ -1,129 +1,170 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
-const boxSize = 20;
+
+let boxSize = 20;
 let fieldSize = 20;
+let speed = 100;
 let snake = [];
+let direction = 'right';
 let food = {};
-let dx = 0;
-let dy = 0;
+let darkTheme = true;
 let score = 0;
-let gameInterval;
+
+canvas.width = fieldSize * boxSize;
+canvas.height = fieldSize * boxSize;
 
 function initGame() {
-  canvas.width = fieldSize * boxSize;
-  canvas.height = fieldSize * boxSize;
-  snake = [{ x: Math.floor(fieldSize/2), y: Math.floor(fieldSize/2) }];
-  spawnFood();
-  dx = 0;
-  dy = 0;
+  snake = [{ x: Math.floor(fieldSize / 2), y: Math.floor(fieldSize / 2) }];
+  generateFood();
   score = 0;
-  document.getElementById('score').textContent = 'Очки: ' + score;
-  if (gameInterval) clearInterval(gameInterval);
-  gameInterval = setInterval(draw, 100);
+  updateScore();
 }
 
-function spawnFood() {
+function generateFood() {
   food = {
     x: Math.floor(Math.random() * fieldSize),
     y: Math.floor(Math.random() * fieldSize)
   };
 }
 
-function draw() {
-  ctx.fillStyle = canvas.style.backgroundColor || '#111';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+function updateScore() {
+  document.getElementById('score').innerText = `Очки: ${score}`;
+}
 
-  for (let part of snake) {
-    ctx.fillStyle = 'lime';
-    ctx.fillRect(part.x * boxSize, part.y * boxSize, boxSize-2, boxSize-2);
-  }
-
-  ctx.fillStyle = 'red';
-  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize-2, boxSize-2);
-
-  let head = { x: snake[0].x + dx, y: snake[0].y + dy };
-
-  if (head.x < 0 || head.y < 0 || head.x >= fieldSize || head.y >= fieldSize || collision(head)) {
-    initGame();
-    return;
-  }
+function moveSnake() {
+  let head = { ...snake[0] };
+  
+  if (direction === 'left') head.x--;
+  if (direction === 'right') head.x++;
+  if (direction === 'up') head.y--;
+  if (direction === 'down') head.y++;
 
   snake.unshift(head);
 
   if (head.x === food.x && head.y === food.y) {
-    spawnFood();
     score++;
-    document.getElementById('score').textContent = 'Очки: ' + score;
+    updateScore();
+    generateFood();
   } else {
     snake.pop();
   }
 }
 
-function collision(head) {
-  return snake.some(part => part.x === head.x && part.y === head.y);
+function drawSnake() {
+  snake.forEach((segment, index) => {
+    ctx.fillStyle = index === 0 ? 'lime' : 'green';
+    ctx.fillRect(segment.x * boxSize, segment.y * boxSize, boxSize, boxSize);
+    if (index === 0) {
+      // глазки змейки
+      ctx.fillStyle = 'black';
+      ctx.fillRect(segment.x * boxSize + 5, segment.y * boxSize + 5, 4, 4);
+      ctx.fillRect(segment.x * boxSize + 11, segment.y * boxSize + 5, 4, 4);
+    }
+  });
 }
 
-document.getElementById('up').addEventListener('click', () => { if (dy === 0) {dx = 0; dy = -1;} });
-document.getElementById('down').addEventListener('click', () => { if (dy === 0) {dx = 0; dy = 1;} });
-document.getElementById('left').addEventListener('click', () => { if (dx === 0) {dx = -1; dy = 0;} });
-document.getElementById('right').addEventListener('click', () => { if (dx === 0) {dx = 1; dy = 0;} });
+function drawFood() {
+  ctx.fillStyle = 'red';
+  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize, boxSize);
+}
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
-  if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
-  if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
-  if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
-});
+function checkCollision() {
+  const head = snake[0];
+  if (head.x < 0 || head.y < 0 || head.x >= fieldSize || head.y >= fieldSize) return true;
+  for (let i = 1; i < snake.length; i++) {
+    if (snake[i].x === head.x && snake[i].y === head.y) return true;
+  }
+  return false;
+}
 
-document.getElementById('settingsButton').addEventListener('click', () => {
-  const menu = document.getElementById('settingsMenu');
-  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-});
+// управление кнопками
+function move(dir) {
+  if ((dir === 'left' && direction !== 'right') ||
+      (dir === 'right' && direction !== 'left') ||
+      (dir === 'up' && direction !== 'down') ||
+      (dir === 'down' && direction !== 'up')) {
+    direction = dir;
+  }
+}
 
-function setTheme(color) {
-  const buttons = document.querySelectorAll('button');
-
-  if (color === 'white') {
-    document.body.style.backgroundColor = 'white';
+// Настройки темы
+function setTheme(theme) {
+  if (theme === 'white') {
+    document.body.style.backgroundColor = '#fff';
     document.body.style.color = 'black';
-    canvas.style.backgroundColor = '#eee';
-    canvas.style.borderColor = 'black';
-    document.getElementById('gameContainer').style.backgroundColor = 'white';
-    document.getElementById('gameContainer').style.borderColor = 'black';
-    document.getElementById('settingsMenu').style.backgroundColor = 'white';
-    document.getElementById('settingsMenu').style.color = 'black';
-    buttons.forEach(btn => {
-      btn.style.backgroundColor = 'white';
+    canvas.style.background = '#fff';
+    canvas.style.border = '2px solid black';
+    document.querySelectorAll('button').forEach(btn => {
+      btn.style.backgroundColor = '#fff';
       btn.style.color = 'black';
-      btn.style.borderColor = 'black';
+      btn.style.border = '2px solid black';
     });
   } else {
-    document.body.style.backgroundColor = 'black';
+    document.body.style.backgroundColor = '#111';
     document.body.style.color = 'white';
-    canvas.style.backgroundColor = '#111';
-    canvas.style.borderColor = 'white';
-    document.getElementById('gameContainer').style.backgroundColor = '#111';
-    document.getElementById('gameContainer').style.borderColor = 'white';
-    document.getElementById('settingsMenu').style.backgroundColor = '#222';
-    document.getElementById('settingsMenu').style.color = 'white';
-    buttons.forEach(btn => {
-      btn.style.backgroundColor = '#333';
+    canvas.style.background = '#111';
+    canvas.style.border = '2px solid white';
+    document.querySelectorAll('button').forEach(btn => {
+      btn.style.backgroundColor = '#111';
       btn.style.color = 'white';
-      btn.style.borderColor = 'white';
+      btn.style.border = '2px solid white';
     });
   }
 }
+
+// Настройки размера поля
 function setFieldSize(size) {
-  if (size === 'small') {
-    fieldSize = 15;
-  } else if (size === 'medium') {
-    fieldSize = 20;
-  } else if (size === 'large') {
-    fieldSize = 30;
-  }
+  if (size === 'small') fieldSize = 15;
+  if (size === 'medium') fieldSize = 20;
+  if (size === 'large') fieldSize = 30;
   
   canvas.width = fieldSize * boxSize;
   canvas.height = fieldSize * boxSize;
-  initGame(); // Полностью перезапуск игры
+  initGame();
 }
+
+// Настройка скорости
+function setSpeed(level) {
+  if (level === 'slow') speed = 200;
+  if (level === 'medium') speed = 100;
+  if (level === 'fast') speed = 50;
+}
+
+// Показать/скрыть меню
+function toggleSettings() {
+  const menu = document.getElementById('settingsMenu');
+  if (menu.style.display === 'none') {
+    menu.style.display = 'block';
+  } else {
+    menu.style.display = 'none';
+  }
+}
+
+// Плавный цикл игры
+let lastTime = 0;
+
+function gameLoop(timestamp) {
+  if (timestamp - lastTime > speed) {
+    update();
+    draw();
+    lastTime = timestamp;
+  }
+  requestAnimationFrame(gameLoop);
+}
+
+function update() {
+  moveSnake();
+  if (checkCollision()) {
+    initGame();
+  }
+}
+
+function draw() {
+  ctx.fillStyle = darkTheme ? '#111' : '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawFood();
+  drawSnake();
+}
+
 initGame();
+requestAnimationFrame(gameLoop);
