@@ -1,160 +1,176 @@
-const canvas = document.getElementById('game');
+const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let boxSize = 20;
-let fieldSize = 20;
-let speed = 100;
-let snake = [];
-let direction = 'right';
-let food = {};
-let darkTheme = true;
+const scoreEl = document.getElementById('score');
+const settingsButton = document.getElementById('settingsButton');
+const settingsMenu = document.getElementById('settingsMenu');
+const gameContainer = document.getElementById('gameContainer');
+
+// Настройки поля
+let tileCount = 20;
+let tileSize = 20;
+let canvasSize = tileCount * tileSize;
+canvas.width = canvasSize;
+canvas.height = canvasSize;
+
+// Змейка
+let snake = [{ x: 10, y: 10 }];
+let food = { x: 5, y: 5 };
+let velocity = { x: 0, y: 0 };
 let score = 0;
-let intervalId = null;
+let speed = 200; // миллисекунды между кадрами
+let interval = null;
 
-resizeCanvas();
-initGame();
-
-function resizeCanvas() {
-  canvas.width = fieldSize * boxSize;
-  canvas.height = fieldSize * boxSize;
-}
-
-function initGame() {
-  snake = [{ x: Math.floor(fieldSize/2), y: Math.floor(fieldSize/2) }];
-  generateFood();
+// Функции игры
+function resetGame() {
+  snake = [{ x: Math.floor(tileCount/2), y: Math.floor(tileCount/2) }];
+  velocity = { x: 0, y: 0 };
+  food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
   score = 0;
   updateScore();
-  if (intervalId) clearInterval(intervalId);
-  intervalId = setInterval(updateGame, speed);
-}
-
-function generateFood() {
-  food = {
-    x: Math.floor(Math.random() * fieldSize),
-    y: Math.floor(Math.random() * fieldSize)
-  };
 }
 
 function updateScore() {
-  document.getElementById('score').innerText = `Очки: ${score}`;
+  scoreEl.textContent = `Очки: ${score}`;
 }
 
-function updateGame() {
+function drawGame() {
+  ctx.fillStyle = document.body.style.backgroundColor === 'white' ? '#fff' : '#111';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Еда
+  ctx.fillStyle = 'red';
+  ctx.fillRect(food.x * tileSize, food.y * tileSize, tileSize, tileSize);
+
+  // Змейка
+  ctx.fillStyle = 'lime';
+  snake.forEach(part => {
+    ctx.fillRect(part.x * tileSize, part.y * tileSize, tileSize - 2, tileSize - 2);
+  });
+
   moveSnake();
-  if (checkCollision()) {
-    initGame();
-  }
-  draw();
+
+  setTimeout(drawGame, speed);
 }
 
 function moveSnake() {
-  let head = { ...snake[0] };
-  
-  if (direction === 'left') head.x--;
-  if (direction === 'right') head.x++;
-  if (direction === 'up') head.y--;
-  if (direction === 'down') head.y++;
+  const head = { x: snake[0].x + velocity.x, y: snake[0].y + velocity.y };
+
+  // Столкновение с краем
+  if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+    resetGame();
+    return;
+  }
+
+  // Столкновение с собой
+  for (let segment of snake) {
+    if (head.x === segment.x && head.y === segment.y) {
+      resetGame();
+      return;
+    }
+  }
 
   snake.unshift(head);
 
+  // Поедание еды
   if (head.x === food.x && head.y === food.y) {
     score++;
     updateScore();
-    generateFood();
+    food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
   } else {
     snake.pop();
   }
 }
 
-function draw() {
-  ctx.fillStyle = darkTheme ? '#111' : '#fff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+// Управление
+document.getElementById('upBtn').addEventListener('click', () => {
+  if (velocity.y === 0) velocity = { x: 0, y: -1 };
+});
+document.getElementById('downBtn').addEventListener('click', () => {
+  if (velocity.y === 0) velocity = { x: 0, y: 1 };
+});
+document.getElementById('leftBtn').addEventListener('click', () => {
+  if (velocity.x === 0) velocity = { x: -1, y: 0 };
+});
+document.getElementById('rightBtn').addEventListener('click', () => {
+  if (velocity.x === 0) velocity = { x: 1, y: 0 };
+});
 
-  // Еда
-  ctx.fillStyle = 'red';
-  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize, boxSize);
-
-  // Змейка
-  snake.forEach((segment, index) => {
-    ctx.fillStyle = index === 0 ? 'lime' : 'green';
-    ctx.fillRect(segment.x * boxSize, segment.y * boxSize, boxSize, boxSize);
-    if (index === 0) {
-      // глазки
-      ctx.fillStyle = 'black';
-      ctx.fillRect(segment.x * boxSize + 5, segment.y * boxSize + 5, 4, 4);
-      ctx.fillRect(segment.x * boxSize + 11, segment.y * boxSize + 5, 4, 4);
-    }
-  });
-}
-
-function move(dir) {
-  if ((dir === 'left' && direction !== 'right') ||
-      (dir === 'right' && direction !== 'left') ||
-      (dir === 'up' && direction !== 'down') ||
-      (dir === 'down' && direction !== 'up')) {
-    direction = dir;
+document.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'ArrowUp':
+      if (velocity.y === 0) velocity = { x: 0, y: -1 };
+      break;
+    case 'ArrowDown':
+      if (velocity.y === 0) velocity = { x: 0, y: 1 };
+      break;
+    case 'ArrowLeft':
+      if (velocity.x === 0) velocity = { x: -1, y: 0 };
+      break;
+    case 'ArrowRight':
+      if (velocity.x === 0) velocity = { x: 1, y: 0 };
+      break;
   }
-}
-
-function checkCollision() {
-  const head = snake[0];
-  if (head.x < 0 || head.y < 0 || head.x >= fieldSize || head.y >= fieldSize) return true;
-  for (let i = 1; i < snake.length; i++) {
-    if (snake[i].x === head.x && snake[i].y === head.y) return true;
-  }
-  return false;
-}
-
-// Темы
-function setTheme(theme) {
-  if (theme === 'white') {
-    darkTheme = false;
-    document.body.style.background = '#fff';
-    document.body.style.color = '#000';
-    canvas.style.background = '#fff';
-    canvas.style.border = '2px solid black';
-    document.querySelectorAll('button').forEach(btn => {
-      btn.style.background = '#fff';
-      btn.style.color = '#000';
-      btn.style.border = '2px solid black';
-    });
-  } else {
-    darkTheme = true;
-    document.body.style.background = '#111';
-    document.body.style.color = 'white';
-    canvas.style.background = '#111';
-    canvas.style.border = '2px solid white';
-    document.querySelectorAll('button').forEach(btn => {
-      btn.style.background = '#111';
-      btn.style.color = 'white';
-      btn.style.border = '2px solid white';
-    });
-  }
-}
-
-// Размер поля
-function setFieldSize(size) {
-  if (size === 'small') fieldSize = 15;
-  if (size === 'medium') fieldSize = 20;
-  if (size === 'large') fieldSize = 30;
-  resizeCanvas();
-  initGame();
-}
-
-// Скорость игры
-function setSpeed(level) {
-  if (level === 'slow') speed = 200;
-  if (level === 'medium') speed = 100;
-  if (level === 'fast') speed = 50;
-  initGame();
-}
+});
 
 // Меню настроек
-function toggleSettings() {
-  const menu = document.getElementById('settingsMenu');
-  if (menu.style.display === 'none') {
-    menu.style.display = 'block';
-  } else {
-    menu.style.display = 'none';
-  }
+settingsButton.addEventListener('click', () => {
+  settingsMenu.classList.toggle('hidden');
+});
+
+// Белый/черный фон
+document.getElementById('whiteBackground').addEventListener('click', () => {
+  document.body.style.backgroundColor = 'white';
+  document.body.style.color = 'black';
+  gameContainer.style.border = '2px solid black';
+  settingsMenu.style.backgroundColor = '#fff';
+  settingsMenu.style.borderColor = 'black';
+});
+
+document.getElementById('blackBackground').addEventListener('click', () => {
+  document.body.style.backgroundColor = 'black';
+  document.body.style.color = 'white';
+  gameContainer.style.border = '2px solid white';
+  settingsMenu.style.backgroundColor = '#111';
+  settingsMenu.style.borderColor = 'white';
+});
+
+// Размеры поля
+document.getElementById('smallField').addEventListener('click', () => {
+  tileCount = 15;
+  resizeCanvas();
+});
+
+document.getElementById('mediumField').addEventListener('click', () => {
+  tileCount = 20;
+  resizeCanvas();
+});
+
+document.getElementById('largeField').addEventListener('click', () => {
+  tileCount = 30;
+  resizeCanvas();
+});
+
+function resizeCanvas() {
+  tileSize = Math.floor(window.innerWidth / tileCount / 2);
+  canvas.width = tileCount * tileSize;
+  canvas.height = tileCount * tileSize;
+  resetGame();
 }
+
+// Скорости
+document.getElementById('slowSpeed').addEventListener('click', () => {
+  speed = 300;
+});
+
+document.getElementById('mediumSpeed').addEventListener('click', () => {
+  speed = 200;
+});
+
+document.getElementById('fastSpeed').addEventListener('click', () => {
+  speed = 100;
+});
+
+// Запуск игры
+resetGame();
+drawGame();
