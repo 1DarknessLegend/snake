@@ -91,7 +91,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Открытие меню
+// Открытие/Закрытие меню
 settingsButton.addEventListener('click', () => {
   settingsMenu.classList.toggle('hidden');
 });
