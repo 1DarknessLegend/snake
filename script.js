@@ -1,147 +1,124 @@
-const canvas = document.getElementById('gameCanvas');
+const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
-const scoreDisplay = document.getElementById('score');
-const settingsButton = document.getElementById('settingsButton');
-const settingsMenu = document.getElementById('settingsMenu');
-
-const upBtn = document.getElementById('upBtn');
-const downBtn = document.getElementById('downBtn');
-const leftBtn = document.getElementById('leftBtn');
-const rightBtn = document.getElementById('rightBtn');
-
-const whiteBgBtn = document.getElementById('whiteBgBtn');
-const blackBgBtn = document.getElementById('blackBgBtn');
-const smallFieldBtn = document.getElementById('smallFieldBtn');
-const mediumFieldBtn = document.getElementById('mediumFieldBtn');
-const largeFieldBtn = document.getElementById('largeFieldBtn');
-const slowSpeedBtn = document.getElementById('slowSpeedBtn');
-const mediumSpeedBtn = document.getElementById('mediumSpeedBtn');
-const fastSpeedBtn = document.getElementById('fastSpeedBtn');
-
-let box = 20;
-let speed = 100;
-let snake = [{x: 10, y: 10}];
-let food = {x: 15, y: 15};
-let dx = 1;
+const boxSize = 20;
+let fieldSize = 20;
+let snake = [];
+let food = {};
+let dx = 0;
 let dy = 0;
 let score = 0;
-let interval;
+let gameInterval;
 
-function startGame() {
-  clearInterval(interval);
-  interval = setInterval(draw, speed);
+function initGame() {
+  canvas.width = fieldSize * boxSize;
+  canvas.height = fieldSize * boxSize;
+  snake = [{ x: Math.floor(fieldSize/2), y: Math.floor(fieldSize/2) }];
+  spawnFood();
+  dx = 0;
+  dy = 0;
+  score = 0;
+  document.getElementById('score').textContent = 'Очки: ' + score;
+  if (gameInterval) clearInterval(gameInterval);
+  gameInterval = setInterval(draw, 100);
+}
+
+function spawnFood() {
+  food = {
+    x: Math.floor(Math.random() * fieldSize),
+    y: Math.floor(Math.random() * fieldSize)
+  };
 }
 
 function draw() {
-  ctx.fillStyle = canvas.style.background || "black";
+  ctx.fillStyle = canvas.style.backgroundColor || '#111';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (let part of snake) {
-    ctx.fillStyle = "lime";
-    ctx.fillRect(part.x * box, part.y * box, box, box);
+    ctx.fillStyle = 'lime';
+    ctx.fillRect(part.x * boxSize, part.y * boxSize, boxSize-2, boxSize-2);
   }
 
-  // Рисуем глазки
-  let head = snake[0];
-  ctx.fillStyle = "black";
-  ctx.fillRect(head.x * box + 5, head.y * box + 5, 5, 5);
-  ctx.fillRect(head.x * box + 10, head.y * box + 5, 5, 5);
+  ctx.fillStyle = 'red';
+  ctx.fillRect(food.x * boxSize, food.y * boxSize, boxSize-2, boxSize-2);
 
-  ctx.fillStyle = "red";
-  ctx.fillRect(food.x * box, food.y * box, box, box);
+  let head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-  let newHead = {x: head.x + dx, y: head.y + dy};
-
-  if (newHead.x < 0 || newHead.y < 0 || newHead.x >= canvas.width/box || newHead.y >= canvas.height/box || snake.some(p => p.x === newHead.x && p.y === newHead.y)) {
-    resetGame();
+  if (head.x < 0 || head.y < 0 || head.x >= fieldSize || head.y >= fieldSize || collision(head)) {
+    initGame();
     return;
   }
 
-  snake.unshift(newHead);
+  snake.unshift(head);
 
-  if (newHead.x === food.x && newHead.y === food.y) {
-    food = {
-      x: Math.floor(Math.random() * (canvas.width / box)),
-      y: Math.floor(Math.random() * (canvas.height / box))
-    };
+  if (head.x === food.x && head.y === food.y) {
+    spawnFood();
     score++;
-    scoreDisplay.textContent = `Очки: ${score}`;
+    document.getElementById('score').textContent = 'Очки: ' + score;
   } else {
     snake.pop();
   }
 }
 
-function resetGame() {
-  snake = [{x: 10, y: 10}];
-  dx = 1;
-  dy = 0;
-  score = 0;
-  scoreDisplay.textContent = "Очки: 0";
-  food = {
-    x: Math.floor(Math.random() * (canvas.width / box)),
-    y: Math.floor(Math.random() * (canvas.height / box))
-  };
+function collision(head) {
+  return snake.some(part => part.x === head.x && part.y === head.y);
 }
 
+document.getElementById('up').addEventListener('click', () => { if (dy === 0) {dx = 0; dy = -1;} });
+document.getElementById('down').addEventListener('click', () => { if (dy === 0) {dx = 0; dy = 1;} });
+document.getElementById('left').addEventListener('click', () => { if (dx === 0) {dx = -1; dy = 0;} });
+document.getElementById('right').addEventListener('click', () => { if (dx === 0) {dx = 1; dy = 0;} });
+
 document.addEventListener('keydown', (e) => {
-  if (e.key === "ArrowUp" && dy === 0) {dx = 0; dy = -1;}
-  if (e.key === "ArrowDown" && dy === 0) {dx = 0; dy = 1;}
-  if (e.key === "ArrowLeft" && dx === 0) {dx = -1; dy = 0;}
-  if (e.key === "ArrowRight" && dx === 0) {dx = 1; dy = 0;}
+  if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
+  if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
+  if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
+  if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
 });
 
-upBtn.addEventListener('click', () => { if (dy === 0) {dx = 0; dy = -1;} });
-downBtn.addEventListener('click', () => { if (dy === 0) {dx = 0; dy = 1;} });
-leftBtn.addEventListener('click', () => { if (dx === 0) {dx = -1; dy = 0;} });
-rightBtn.addEventListener('click', () => { if (dx === 0) {dx = 1; dy = 0;} });
-
-settingsButton.addEventListener('click', () => {
-  settingsMenu.classList.toggle('hidden');
+document.getElementById('settingsButton').addEventListener('click', () => {
+  const menu = document.getElementById('settingsMenu');
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 });
 
-whiteBgBtn.addEventListener('click', () => {
-  document.body.style.background = "white";
-  document.body.style.color = "black";
-  canvas.style.background = "white";
-});
+function setTheme(color) {
+  const buttons = document.querySelectorAll('button');
 
-blackBgBtn.addEventListener('click', () => {
-  document.body.style.background = "black";
-  document.body.style.color = "white";
-  canvas.style.background = "black";
-});
+  if (color === 'white') {
+    document.body.style.backgroundColor = 'white';
+    document.body.style.color = 'black';
+    canvas.style.backgroundColor = '#eee';
+    canvas.style.borderColor = 'black';
+    document.getElementById('gameContainer').style.backgroundColor = 'white';
+    document.getElementById('gameContainer').style.borderColor = 'black';
+    document.getElementById('settingsMenu').style.backgroundColor = 'white';
+    document.getElementById('settingsMenu').style.color = 'black';
+    buttons.forEach(btn => {
+      btn.style.backgroundColor = 'white';
+      btn.style.color = 'black';
+      btn.style.borderColor = 'black';
+    });
+  } else {
+    document.body.style.backgroundColor = 'black';
+    document.body.style.color = 'white';
+    canvas.style.backgroundColor = '#111';
+    canvas.style.borderColor = 'white';
+    document.getElementById('gameContainer').style.backgroundColor = '#111';
+    document.getElementById('gameContainer').style.borderColor = 'white';
+    document.getElementById('settingsMenu').style.backgroundColor = '#222';
+    document.getElementById('settingsMenu').style.color = 'white';
+    buttons.forEach(btn => {
+      btn.style.backgroundColor = '#333';
+      btn.style.color = 'white';
+      btn.style.borderColor = 'white';
+    });
+  }
+}
 
-smallFieldBtn.addEventListener('click', () => {
-  canvas.width = 200;
-  canvas.height = 200;
-});
+function setFieldSize(size) {
+  if (size === 'small') fieldSize = 15;
+  if (size === 'medium') fieldSize = 20;
+  if (size === 'large') fieldSize = 30;
+  initGame();
+}
 
-mediumFieldBtn.addEventListener('click', () => {
-  canvas.width = 400;
-  canvas.height = 400;
-});
-
-largeFieldBtn.addEventListener('click', () => {
-  canvas.width = 600;
-  canvas.height = 600;
-});
-
-slowSpeedBtn.addEventListener('click', () => {
-  speed = 150;
-  startGame();
-});
-
-mediumSpeedBtn.addEventListener('click', () => {
-  speed = 100;
-  startGame();
-});
-
-fastSpeedBtn.addEventListener('click', () => {
-  speed = 50;
-  startGame();
-});
-
-// Начало
-canvas.width = 400;
-canvas.height = 400;
-startGame();
+initGame();
