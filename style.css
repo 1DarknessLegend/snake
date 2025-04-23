@@ -1,91 +1,108 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Общие стили */
 body {
-  height: 100vh;
-  background-color: #111;
-  color: white;
+  margin: 0;
   font-family: Arial, sans-serif;
+  background-color: #000;
+  color: #fff;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
-#container {
-  position: relative;
-  text-align: center;
-  width: 100%;
-  max-width: 600px;
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  margin: 10px 0;
 }
 
-#game {
-  background: #111;
-  border: 2px solid white;
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-h1 {
-  margin-bottom: 10px;
+#header h1 {
+  margin: 0;
+  font-size: 32px;
 }
 
 #score {
-  margin: 10px 0;
+  font-size: 20px;
+}
+
+#settingsButton {
   font-size: 24px;
+  background: none;
+  border: 2px solid white;
+  border-radius: 50%;
+  padding: 5px 10px;
+  color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+#gameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  border: 2px solid white;
+  padding: 10px;
+  background-color: #111;
+}
+
+#gameCanvas {
+  background-color: #111;
+  display: block;
 }
 
 #controls {
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#controls button {
-  width: 60px;
-  height: 60px;
-  font-size: 24px;
+#controls > button, #controls > div > button {
   margin: 5px;
+  padding: 10px;
+  font-size: 24px;
   border: 2px solid white;
-  background-color: #111;
-  color: white;
   border-radius: 10px;
-  user-select: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
   outline: none;
 }
 
-#settingsBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 30px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
+#controls > div {
+  display: flex;
+  gap: 10px;
 }
 
+/* Меню настроек */
 #settingsMenu {
+  position: absolute;
+  top: 60px;
+  right: 20px;
   background: #111;
   border: 2px solid white;
   padding: 10px;
-  margin-top: 20px;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
 }
 
 #settingsMenu button {
-  width: 100%;
-  margin: 5px 0;
-  padding: 10px;
-  font-size: 16px;
+  background: transparent;
   border: 2px solid white;
-  background: #111;
   color: white;
+  padding: 5px;
+  margin: 5px 0;
   cursor: pointer;
+  font-size: 16px;
+  outline: none;
 }
 
-/* Убираем синее выделение */
-button:focus, button:active {
-  outline: none;
-  box-shadow: none;
+/* Состояния */
+.hidden {
+  display: none;
 }
