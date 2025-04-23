@@ -1,126 +1,90 @@
-body {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   background: black;
   color: white;
   font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
+}
+
+.header {
   position: relative;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+}
+
+#score {
+  margin-top: 5px;
 }
 
 #settingsButton {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: transparent;
+  background: none;
   border: none;
-  font-size: 28px;
-  color: inherit;
+  font-size: 30px;
   cursor: pointer;
-  z-index: 100;
+  color: inherit;
 }
+
 #settingsButton:focus {
   outline: none;
 }
 
-#header {
-  display: flex;
+#settingsMenu {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background: #222;
+  border: 2px solid white;
+  padding: 10px;
+  display: none;
   flex-direction: column;
-  align-items: center;
-  margin-top: 40px;
-}
-
-#title {
-  font-size: 32px;
-  margin: 5px 0;
-}
-
-#score {
-  font-size: 18px;
-  margin-bottom: 10px;
 }
 
 #gameArea {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   flex-grow: 1;
-  width: 100%;
-  background: black;
-  border: 2px solid white;
-  padding: 10px;
-  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #gameCanvas {
-  background: #111;
-  border: 2px solid white;
-  max-width: 90vw;
-  max-height: 60vh;
-  box-sizing: border-box;
+  background: black;
+  border: 3px solid white;
 }
 
 #controls {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin: 10px;
+  text-align: center;
 }
 
 #controls button {
   width: 60px;
   height: 60px;
+  font-size: 30px;
   margin: 5px;
-  background: transparent;
+  background: none;
   border: 2px solid white;
   color: white;
-  font-size: 24px;
   border-radius: 10px;
   cursor: pointer;
-}
-
-.left-right {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
 }
 
 #controls button:focus {
   outline: none;
 }
 
-/* Настройки */
-#settingsMenu {
-  position: absolute;
-  top: 60px;
-  right: 10px;
-  background: #111;
-  border: 2px solid white;
-  padding: 10px;
-  display: none; /* Скрыто по умолчанию */
-  flex-direction: column;
-  gap: 8px;
-  z-index: 99;
-}
-
-#settingsMenu button {
-  background: transparent;
-  border: 2px solid white;
-  color: white;
-  padding: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-#settingsMenu button:focus {
-  outline: none;
-}
-
-/* Скрытие */
 .hidden {
   display: none;
 }
